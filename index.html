@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CyberForge Ultra — Cybersecurity Tools Database</title>
+  <meta name="description" content="The most comprehensive interactive cybersecurity tools reference. 133+ real tools with commands, labs, and resources." />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#00f5ff" />
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+
+<!-- Matrix rain background -->
+<canvas id="matrix-canvas"></canvas>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a class="navbar-brand" href="#" onclick="showPage('home');return false;">
+    ⚔ Cyber<span>Forge</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#" data-page="home"     class="active">Home</a></li>
+    <li><a href="#" data-page="tools">Tools</a></li>
+    <li><a href="#" data-page="labs">Labs</a></li>
+    <li><a href="#" data-page="resources">Resources</a></li>
+  </ul>
+  <div class="navbar-search">
+    <span class="search-icon">🔍</span>
+    <input id="nav-search" type="search" placeholder="Search tools…" autocomplete="off" />
+    <div id="search-dropdown" class="search-dropdown"></div>
+  </div>
+  <button id="theme-btn" class="theme-btn" title="Toggle theme">☀️</button>
+</nav>
+
+<!-- APP LAYOUT -->
+<div class="app-layout">
+
+  <!-- SIDEBAR (visible on Tools page) -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-title">Categories</div>
+    <div id="sidebar-cats"></div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- HOME PAGE -->
+    <section class="page active" id="page-home">
+      <div class="hero">
+        <h1 class="hero-title">
+          The Ultimate<br><span class="accent">Cybersecurity</span> Arsenal
+        </h1>
+        <p class="hero-subtitle">
+          133+ real-world tools with commands, 20+ guided interactive labs,<br>
+          and curated learning resources — all in one place.
+        </p>
+        <div class="typing-text" id="typing-text"></div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="num" id="stat-tools">0</div><div class="label">Tools</div></div>
+        <div class="stat-card"><div class="num" id="stat-labs">0</div><div class="label">Labs</div></div>
+        <div class="stat-card"><div class="num" id="stat-cats">0</div><div class="label">Categories</div></div>
+      </div>
+
+      <h2 style="margin-bottom:.75rem;font-size:1.1rem;color:var(--text2)">⭐ Featured Tools</h2>
+      <div class="featured-grid" id="featured-grid"></div>
+
+      <div style="text-align:center;margin-top:2rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+        <button class="run-btn" style="font-size:1rem;padding:.7rem 2rem" data-goto="tools">Browse All Tools →</button>
+        <button class="run-btn" style="font-size:1rem;padding:.7rem 2rem;background:var(--purple);color:#fff" data-goto="labs">Start a Lab →</button>
+      </div>
+    </section>
+
+    <!-- TOOLS PAGE -->
+    <section class="page" id="page-tools">
+      <div class="tools-header">
+        <h2 style="font-size:1.2rem">🛠 Tools Database</h2>
+        <span class="tools-count" id="tools-count">0 tools</span>
+        <input id="main-search" type="search" placeholder="Filter tools…"
+          style="margin-left:auto;padding:.4rem .9rem;border-radius:20px;border:1px solid var(--border);background:var(--bg3);color:var(--text);outline:none;font-size:.85rem;width:220px"
+          autocomplete="off" />
+      </div>
+      <div class="tools-grid" id="tools-grid"></div>
+      <div style="text-align:center;margin-top:1.5rem">
+        <button id="load-more" class="run-btn" style="display:none;padding:.6rem 2rem">Load More</button>
+      </div>
+    </section>
+
+    <!-- LABS PAGE -->
+    <section class="page" id="page-labs">
+      <h2 style="margin-bottom:1rem;font-size:1.2rem">🔬 Interactive Labs</h2>
+      <p style="color:var(--text2);margin-bottom:1.5rem;font-size:.9rem">
+        Simulated terminal exercises for hands-on practice.
+        Click a lab card to begin. Use <code style="color:var(--green)">next</code> to step through commands.
+      </p>
+      <div class="labs-grid" id="labs-grid"></div>
+
+      <div id="lab-panel" style="display:none;margin-top:1.5rem">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
+          <h3 id="lab-title" style="color:var(--cyan)"></h3>
+          <button id="lab-close-btn" class="theme-btn">✕ Close</button>
+        </div>
+        <div class="lab-terminal" id="lab-terminal"></div>
+        <div class="lab-input-row">
+          <input id="lab-cmd-input" class="lab-input" placeholder='Type "next" or press Run…' />
+          <button id="lab-run-btn" class="run-btn">▶ Run</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESOURCES PAGE -->
+    <section class="page" id="page-resources">
+      <h2 style="margin-bottom:1rem;font-size:1.2rem">📚 Resources</h2>
+      <p style="color:var(--text2);margin-bottom:1.5rem;font-size:.9rem">
+        Curated learning platforms, certifications, reference sites, and vulnerable lab environments.
+      </p>
+      <div class="resources-grid" id="resources-grid"></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- TOOL MODAL -->
+<div class="modal-overlay" id="tool-modal">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- FOOTER -->
+<footer>
+  <strong>⚠ For authorized security testing and educational use only.</strong><br>
+  CyberForge Ultra — Built for the security community © 2026
+</footer>
+
+<script src="assets/matrix.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
